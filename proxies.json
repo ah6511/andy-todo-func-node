@@ -7,7 +7,7 @@
         "route": "/"
       },
       "debug":true,
-      "backendUri": "https://andytodofuncnode.z19.web.core.windows.net/index.html"
+      "backendUri": "%WEB_HOST%/index.html"
     },
     "proxyContent": {
       "matchCondition": {
@@ -15,7 +15,7 @@
         "route": "/content/{*restOfPath}"
       },
       "debug":true,
-      "backendUri": "https://andytodofuncnode.z19.web.core.windows.net/content/{restOfPath}"
+      "backendUri": "%WEB_HOST%/content/{restOfPath}"
     }
   }
 }
