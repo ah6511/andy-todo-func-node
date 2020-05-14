@@ -1,0 +1,29 @@
+{
+  "name": "typescript-azure-functions-todo",
+  "description": "",
+  "private": true,
+  "version": "0.1.0",
+  "scripts": {
+    "build": "tsc",
+    "watch": "tsc -w",
+    "prestart": "npm run build && func extensions install",
+    "start:host": "func start",
+    "start": "npm run start:host & npm run watch",
+    "build:production": "npm run prestart && npm prune --production",
+    "test": "echo \"No tests yet...\""
+  },
+  "dependencies": {
+    "@azure/identity": "^1.0.3",
+    "@azure/keyvault-secrets": "^4.0.2",
+    "@types/node": "^13.13.4",
+    "@types/uuid": "^7.0.3",
+    "applicationinsights": "^1.7.5",
+    "azure-storage": "^2.10.3",
+    "case": "^1.6.1",
+    "uuid": "^7.0.3"
+  },
+  "devDependencies": {
+    "@azure/functions": "^1.0.1-beta2",
+    "typescript": "^3.3.3"
+  }
+}
