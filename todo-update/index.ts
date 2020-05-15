@@ -1,6 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
-
 import { todoEntity2Todo, retrieveTodo, updateTodo } from "../shared/azure-storage-utils";
+import { retrieveBlobStorageConnectioon } from '../shared/azure-keyvalut-utils';
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
@@ -15,7 +15,8 @@ const httpTrigger: AzureFunction = async function (
     }
   } else {
     const isCompleted = req.body.isCompleted;
-    const res = await retrieveTodo(id);
+		const conn = await retrieveBlobStorageConnectioon();
+    const res = await retrieveTodo(conn, id);
     if (!res) {
       context.res = {
         status: 404,
@@ -23,7 +24,7 @@ const httpTrigger: AzureFunction = async function (
       } 
     } else {
       res['isCompleted']['_'] = isCompleted;
-      if (updateTodo(res)) {
+      if (updateTodo(conn, res)) {
         const todo = todoEntity2Todo(res);
         context.res = {
           status: 200,

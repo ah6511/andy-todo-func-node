@@ -1,6 +1,7 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { v4 as uuid } from 'uuid';
 // import * as appInsights from 'applicationinsights';
+import { retrieveBlobStorageConnectioon } from '../shared/azure-keyvalut-utils';
 
 import { todo2TodoEntity, createTodo, writeToQueue } from '../shared/azure-storage-utils';
 import { Todo } from '../shared/models';
@@ -27,10 +28,11 @@ const httpTrigger: AzureFunction = async function (
 			isCompleted: false
 		}
 		
+		const conn = await retrieveBlobStorageConnectioon();
 		const todoEntity = todo2TodoEntity(todo);
 
-		const res = await createTodo(todoEntity);
-		const res1 = await writeToQueue(todo);
+		const res = await createTodo(conn, todoEntity);
+		await writeToQueue(todo);
 		if (res) {
 			context.res = {
 				status: 200,
