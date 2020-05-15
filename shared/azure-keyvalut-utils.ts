@@ -18,3 +18,23 @@ export async function retrieveSecretValue() {
 
   return secretValue;
 }
+
+export let blobStorageConnection;
+
+export async function retrieveBlobStorageConnectioon() {
+  if (blobStorageConnection) {
+    return blobStorageConnection;
+  }
+
+  //const credential = new DefaultAzureCredential();
+  const credential = new ClientSecretCredential(process.env['AZURE_TENANT_ID'], process.env['AZURE_CLIENT_ID'], process.env['AZURE_CLIENT_SECRET']);
+
+  const url = `https://${process.env['KEYVAULT_NAME']}.vault.azure.net`;
+  const client = new SecretClient(url, credential);
+
+  const secretName = process.env['KEYVAULT_SECRET_NAME'];
+  const secretValue = await client.getSecret(secretName);
+  blobStorageConnection = secretValue['value'];
+
+  return blobStorageConnection;
+}

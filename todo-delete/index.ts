@@ -1,5 +1,6 @@
 import { AzureFunction, Context, HttpRequest } from "@azure/functions";
 import { retrieveTodo, deleteTodo } from "../shared/azure-storage-utils";
+import { retrieveBlobStorageConnectioon } from '../shared/azure-keyvalut-utils';
 
 const httpTrigger: AzureFunction = async function (
   context: Context,
@@ -13,14 +14,15 @@ const httpTrigger: AzureFunction = async function (
       body: 'Bad request.'
     }
   } else {
-    const res = await retrieveTodo(id);
+		const conn = await retrieveBlobStorageConnectioon();
+    const res = await retrieveTodo(conn, id);
     if (!res) {
       context.res = {
         status: 404,
         body: 'Not found.'
       } 
     } else {
-      if (deleteTodo(res)) {
+      if (deleteTodo(conn, res)) {
         context.res = {
           status: 200
         } 

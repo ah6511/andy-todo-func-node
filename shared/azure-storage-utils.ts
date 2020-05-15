@@ -1,9 +1,18 @@
 import * as AzureStorage from 'azure-storage';
 
-const tableService = AzureStorage.createTableService(process.env['AzureWebJobsStorage']);
-const queueService = AzureStorage.createQueueService(process.env['AzureWebJobsStorage']);
-queueService.messageEncoder = new AzureStorage.QueueMessageEncoder.TextBase64QueueMessageEncoder();
-const blobService = AzureStorage.createBlobService(process.env['AzureWebJobsStorage']);
+let tableService;
+let queueService;
+let blobService;
+
+function initServices(connStr) {
+	if (tableService && queueService && blobService) {
+		return
+	}
+	tableService = AzureStorage.createTableService(connStr);
+	queueService = AzureStorage.createQueueService(connStr);
+	queueService.messageEncoder = new AzureStorage.QueueMessageEncoder.TextBase64QueueMessageEncoder();
+	blobService = AzureStorage.createBlobService(connStr);	
+}
 
 export function todo2TodoEntity(todo) {
   const todoEntry = {
@@ -28,7 +37,9 @@ export function todoEntity2Todo(todoEntity) {
   return todo;
 }
 
-export async function queryAllTodos() {
+export async function queryAllTodos(connStr) {
+	initServices(connStr);
+	
 	return new Promise((resolve, reject) => 
 		tableService.queryEntities(process.env['TableName'], 
 			null, 
@@ -43,7 +54,9 @@ export async function queryAllTodos() {
 	)
 }
 
-export async function createTodo(todoEntry) {
+export async function createTodo(connStr, todoEntry) {
+	initServices(connStr);
+	
 	return new Promise((resolve, reject) => 
 		tableService.insertEntity(process.env['TableName'], 
 			todoEntry,
@@ -57,7 +70,9 @@ export async function createTodo(todoEntry) {
 	)
 }
 
-export async function retrieveTodo(id) {
+export async function retrieveTodo(connStr, id) {
+	initServices(connStr);
+	
   return new Promise((resolve, reject) => 
     tableService.retrieveEntity(
 			process.env['TableName'], 
@@ -73,7 +88,9 @@ export async function retrieveTodo(id) {
 	)
 }
 
-export async function updateTodo(todoEntity) {
+export async function updateTodo(connStr, todoEntity) {
+	initServices(connStr);
+	
 	return new Promise((resolve, reject) => 
 		tableService.replaceEntity(
 			process.env['TableName'], 
@@ -88,7 +105,9 @@ export async function updateTodo(todoEntity) {
 	)
 }
 
-export async function deleteTodo(todoEntity) {
+export async function deleteTodo(connStr, todoEntity) {
+	initServices(connStr);
+	
   return new Promise((resolve, reject) => 
     tableService.deleteEntity(
 			process.env['TableName'], 
